@@ -1,7 +1,7 @@
 // ==========WIFI INIT==============
 void wifiInit(void) {
 #if DEBUG
-  Serial.println(F(D_WIFI_START));
+  Serial.println(F("Start Wifi"));
 #endif
  // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
@@ -12,9 +12,9 @@ void wifiInit(void) {
     Serial.println("");
 #if DEBUG
   Serial.println("");
-  Serial.print(D_WIFI_CONNECTED_TO);
+  Serial.print("Connected to ");
   Serial.println(SSID);
-  Serial.print(D_WIFI_IPADRESS);
+  Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 #endif
   server.on("/", []() {
@@ -23,6 +23,6 @@ void wifiInit(void) {
   ElegantOTA.begin(&server);    // Start ElegantOTA
   server.begin();
 #if DEBUG
-  Serial.println(D_WIFI_HTTPSTARTED);
+  Serial.println("Server started");
 #endif
 }

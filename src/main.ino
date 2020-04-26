@@ -6,36 +6,42 @@
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <ElegantOTA.h>
+#include <NTPClient.h>
+#include <WiFiUdp.h>
 #include <userconfig.h>
+#include <Arduino.h>
 
 #include <Adafruit_NeoPixel.h>
 
-// =========Definitions==============
-#define MICROSEC              1000000L
-#define MILLISEC              1000L
-#define SEC                   1L
-#define MINUTE                (unsigned int) 60L*SEC
-#define HOUR                  (unsigned int) 60L*MINUTE
-#define DAY                   (unsigned long) 24L*HOUR
-
-#ifndef MY_LANGUAGE
-  #include "language/de-DE.h"
-#else
-  #define QUOTEME(x) QUOTEME_1(x)
-  #define QUOTEME_1(x) #x
-  #define INCLUDE_FILE(x) QUOTEME(language/x.h)
-  #include INCLUDE_FILE(MY_LANGUAGE)
-#endif
-
-#ifdef NEOPIXEL
-#include "neopixel.h"
-#endif // NEOPIXEL
+// DEFINITIONS
 // ===============================
-
-void colorWipe(uint32_t color, int wait);
-void theaterChase(uint32_t color, int wait);
-void theaterChaseRainbow(int wait);
-void rainbow(int wait);
+// Declare our NeoPixel strip object:
+Adafruit_NeoPixel led_segments(LED_COUNT, PIN_SEGMENTS, NEO_GRB + NEO_KHZ800);
+WiFiUDP ntpUDP;
+int PpSeg = 9;
+int number0[] = {1,1,1,0,1,1,1};
+int number1[] = {1,0,0,0,1,0,0};
+int number2[] = {1,1,0,1,0,1,1};
+int number3[] = {1,1,0,1,1,1,0};
+int number4[] = {1,0,1,1,1,0,0};
+int number5[] = {0,1,1,1,1,1,0};
+int number6[] = {0,1,1,1,1,1,1};
+int number7[] = {1,1,0,0,1,0,0};
+int number8[] = {1,1,1,1,1,1,1};
+int number9[] = {1,1,1,1,1,1,0};
+int SegmentOffset[] = {0,9,27,36,45,54,72};
+unsigned long timer1 = 0;
+int hours;
+int hour1;
+int hour2;
+int minutes;
+int minutes1;
+int minutes2;
+int seconds;
+int seconds1;
+int seconds2;
+// ===============================
+NTPClient timeClient(ntpUDP, "europe.pool.ntp.org", 7200, 60000);
 
 ESP8266WebServer server(80);
 #include "wifi.h"
@@ -45,101 +51,229 @@ void setup(void) {
     // Wifi initialize
   wifiInit();
 
+// START LED
+// ===============================
   led_segments.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
   led_segments.show();            // Turn OFF all pixels ASAP
   led_segments.setBrightness(50); // Set BRIGHTNESS to about 1/5 (max = 255)
+// ===============================
+
+  timeClient.begin();
 }
 
 void loop(void) {
+// OTA
+// ===============================
   server.handleClient();
-  
-  // Fill along the length of the strip in various colors...
-  colorWipe(led_segments.Color(255,   0,   0), 50); // Red
-  colorWipe(led_segments.Color(  0, 255,   0), 50); // Green
-  colorWipe(led_segments.Color(  0,   0, 255), 50); // Blue
+// ===============================
 
-  // Do a theater marquee effect in various colors...
-  //theaterChase(led_segments.Color(127, 127, 127), 50); // White, half brightness
-  //theaterChase(led_segments.Color(127,   0,   0), 50); // Red, half brightness
-  //theaterChase(led_segments.Color(  0,   0, 127), 50); // Blue, half brightness
-
-  rainbow(10);             // Flowing rainbow cycle along the whole strip
-  theaterChaseRainbow(50); // Rainbow-enhanced theaterChase variant
-}
-
-// Fill strip pixels one after another with a color. Strip is NOT cleared
-// first; anything there will be covered pixel by pixel. Pass in color
-// (as a single 'packed' 32-bit value, which you can get by calling
-// strip.Color(red, green, blue) as shown in the loop() function above),
-// and a delay time (in milliseconds) between pixels.
-
-void colorWipe(uint32_t color, int wait) {
-  for(int i=0; i<led_segments.numPixels(); i++) { // For each pixel in strip...
-    led_segments.setPixelColor(i, color);         //  Set pixel's color (in RAM)
-    led_segments.show();                          //  Update strip to match
-    delay(wait);                           //  Pause for a moment
+// Refresh Time
+// ===============================
+ while(millis() >= timer1 + 100)
+  {
+  timeClient.update();
+//    Serial.print("Actual time: ");
+//    Serial.println(timeClient.getFormattedTime());
+  hours = timeClient.getHours();
+    hour1 = hours / 10;                   // left position hour
+    hour2 = hours - (hour1 *10);          // right position hour
+  minutes = timeClient.getMinutes();
+    minutes1 = minutes / 10;              // left position minute
+    minutes2 = minutes - (minutes1 *10);  // right position minute
+  seconds = timeClient.getSeconds();
+    seconds1 = seconds / 10;              // left position second
+    seconds2 = seconds - (seconds1 *10);  // right position second
+  timer1 = millis();
   }
+// ===============================
+
+  setSegment(0, seconds2, 0, 0, 255);
+//  setSegment(90,seconds1, 0, 0, 255);
+//  setSegment(180,minutes2, 0, 0, 255);
+//  setSegment(270,minutes1, 0, 0, 255);
+ 
 }
 
-// Theater-marquee-style chasing lights. Pass in a color (32-bit value,
-// a la strip.Color(r,g,b) as mentioned above), and a delay time (in ms)
-// between frames.
-void theaterChase(uint32_t color, int wait) {
-  for(int a=0; a<10; a++) {  // Repeat 10 times...
-    for(int b=0; b<3; b++) { //  'b' counts from 0 to 2...
-      led_segments.clear();         //   Set all pixels in RAM to 0 (off)
-      // 'c' counts up from 'b' to end of strip in steps of 3...
-      for(int c=b; c<led_segments.numPixels(); c += 3) {
-        led_segments.setPixelColor(c, color); // Set pixel 'c' to value 'color'
+// ============================================================================================================================
+// ============================================================================================================================
+// Set Segments
+// ===============================
+void setSegment (int a, int number, int r, int g, int b)
+{
+   switch (number)
+  {
+    case 0:
+      for(int y = 0; y<7; y += 1) 
+      {
+        for(int x = 0; x<PpSeg; x += 1)
+        {
+          
+          if (number0[y] == 1)
+          {
+              led_segments.setPixelColor(SegmentOffset[y]+x+a, r, g, b);
+          }
+          if (number0[y] == 0)
+          {
+              led_segments.setPixelColor(SegmentOffset[y]+x+a, 0, 0, 0);
+          }
+        }
       }
-      led_segments.show(); // Update strip with new contents
-      delay(wait);  // Pause for a moment
-    }
-  }
-}
-
-// Rainbow cycle along whole strip. Pass delay time (in ms) between frames.
-void rainbow(int wait) {
-  // Hue of first pixel runs 5 complete loops through the color wheel.
-  // Color wheel has a range of 65536 but it's OK if we roll over, so
-  // just count from 0 to 5*65536. Adding 256 to firstPixelHue each time
-  // means we'll make 5*65536/256 = 1280 passes through this outer loop:
-  for(long firstPixelHue = 0; firstPixelHue < 5*65536; firstPixelHue += 256) {
-    for(int i=0; i<led_segments.numPixels(); i++) { // For each pixel in strip...
-      // Offset pixel hue by an amount to make one full revolution of the
-      // color wheel (range of 65536) along the length of the strip
-      // (strip.numPixels() steps):
-      int pixelHue = firstPixelHue + (i * 65536L / led_segments.numPixels());
-      // strip.ColorHSV() can take 1 or 3 arguments: a hue (0 to 65535) or
-      // optionally add saturation and value (brightness) (each 0 to 255).
-      // Here we're using just the single-argument hue variant. The result
-      // is passed through strip.gamma32() to provide 'truer' colors
-      // before assigning to each pixel:
-      led_segments.setPixelColor(i, led_segments.gamma32(led_segments.ColorHSV(pixelHue)));
-    }
-    led_segments.show(); // Update strip with new contents
-    delay(wait);  // Pause for a moment
-  }
-}
-
-// Rainbow-enhanced theater marquee. Pass delay time (in ms) between frames.
-void theaterChaseRainbow(int wait) {
-  int firstPixelHue = 0;     // First pixel starts at red (hue 0)
-  for(int a=0; a<30; a++) {  // Repeat 30 times...
-    for(int b=0; b<3; b++) { //  'b' counts from 0 to 2...
-      led_segments.clear();         //   Set all pixels in RAM to 0 (off)
-      // 'c' counts up from 'b' to end of strip in increments of 3...
-      for(int c=b; c<led_segments.numPixels(); c += 3) {
-        // hue of pixel 'c' is offset by an amount to make one full
-        // revolution of the color wheel (range 65536) along the length
-        // of the strip (strip.numPixels() steps):
-        int      hue   = firstPixelHue + c * 65536L / led_segments.numPixels();
-        uint32_t color = led_segments.gamma32(led_segments.ColorHSV(hue)); // hue -> RGB
-        led_segments.setPixelColor(c, color); // Set pixel 'c' to value 'color'
+      led_segments.show();
+      break;
+    case 1:
+      for(int y = 0; y<8; y += 1) 
+      {
+        for(int x = 0; x<PpSeg; x += 1) 
+        {
+          
+          if (number1[y] == 1)
+          {
+              led_segments.setPixelColor(SegmentOffset[y]+x+a, r, g, b);
+          }
+          if (number1[y] == 0)
+          {
+              led_segments.setPixelColor(SegmentOffset[y]+x+a, 0, 0, 0);
+          }
+        }
       }
-      led_segments.show();                // Update strip with new contents
-      delay(wait);                 // Pause for a moment
-      firstPixelHue += 65536 / 90; // One cycle of color wheel over 90 frames
-    }
+      led_segments.show();
+    case 2:
+      for(int y = 0; y<8; y += 1) 
+      {
+        for(int x = 0; x<PpSeg; x += 1) 
+        {
+      
+          if (number2[y] == 1)
+          {
+          led_segments.setPixelColor(SegmentOffset[y]+x+a, r, g, b);
+          }
+          if (number2[y] == 0)
+          {
+          led_segments.setPixelColor(SegmentOffset[y]+x+a, 0, 0, 0);
+          }
+        }
+      }
+      led_segments.show();
+    case 3:
+      for(int y = 0; y<8; y += 1) 
+      {
+        for(int x = 0; x<PpSeg; x += 1) 
+        {
+      
+          if (number3[y] == 1)
+          {
+          led_segments.setPixelColor(SegmentOffset[y]+x+a, r, g, b);
+          }
+          if (number3[y] == 0)
+          {
+          led_segments.setPixelColor(SegmentOffset[y]+x+a, 0, 0, 0);
+          }
+        }
+      }
+      led_segments.show();
+    case 4:
+      for(int y = 0; y<8; y += 1) 
+      {
+        for(int x = 0; x<PpSeg; x += 1) 
+        {
+      
+          if (number4[y] == 1)
+          {
+          led_segments.setPixelColor(SegmentOffset[y]+x+a, r, g, b);
+          }
+          if (number4[y] == 0)
+          {
+          led_segments.setPixelColor(SegmentOffset[y]+x+a, 0, 0, 0);
+          }
+        }
+      }
+      led_segments.show();
+    case 5:
+      for(int y = 0; y<8; y += 1) 
+      {
+        for(int x = 0; x<PpSeg; x += 1) 
+        {
+      
+          if (number5[y] == 1)
+          {
+          led_segments.setPixelColor(SegmentOffset[y]+x+a, r, g, b);
+          }
+          if (number5[y] == 0)
+          {
+          led_segments.setPixelColor(SegmentOffset[y]+x+a, 0, 0, 0);
+          }
+        }
+      }
+      led_segments.show();
+    case 6:
+      for(int y = 0; y<8; y += 1) 
+      {
+        for(int x = 0; x<PpSeg; x += 1) 
+        {
+      
+          if (number6[y] == 1)
+          {
+          led_segments.setPixelColor(SegmentOffset[y]+x+a, r, g, b);
+          }
+          if (number6[y] == 0)
+          {
+          led_segments.setPixelColor(SegmentOffset[y]+x+a, 0, 0, 0);
+          }
+        }
+      }
+      led_segments.show();
+    case 7:
+      for(int y = 0; y<8; y += 1) 
+      {
+        for(int x = 0; x<PpSeg; x += 1) 
+        {
+      
+          if (number7[y] == 1)
+          {
+          led_segments.setPixelColor(SegmentOffset[y]+x+a, r, g, b);
+          }
+          if (number7[y] == 0)
+          {
+          led_segments.setPixelColor(SegmentOffset[y]+x+a, 0, 0, 0);
+          }
+        }
+      }
+      led_segments.show();
+    case 8:
+      for(int y = 0; y<8; y += 1) 
+      {
+        for(int x = 0; x<PpSeg; x += 1) 
+        {
+      
+          if (number8[y] == 1)
+          {
+          led_segments.setPixelColor(SegmentOffset[y]+x+a, r, g, b);
+          }
+          if (number8[y] == 0)
+          {
+          led_segments.setPixelColor(SegmentOffset[y]+x+a, 0, 0, 0);
+          }
+        }
+      }
+      led_segments.show();
+    case 9:
+      for(int y = 0; y<8; y += 1) 
+      {
+        for(int x = 0; x<PpSeg; x += 1) 
+        {
+      
+          if (number9[y] == 1)
+          {
+          led_segments.setPixelColor(SegmentOffset[y]+x+a, r, g, b);
+          }
+          if (number9[y] == 0)
+          {
+          led_segments.setPixelColor(SegmentOffset[y]+x+a, 0, 0, 0);
+          }
+        }
+      }
+      led_segments.show();
+    default:
+      break;
   }
 }

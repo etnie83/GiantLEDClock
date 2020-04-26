@@ -1,39 +1,41 @@
+############################################
+Giant LED Clock with ESP (Arduino) 
 
-This directory is intended for project header files.
+a 3d Printed Giant LED with an ESP (Arduino).
 
-A header file is a file containing C declarations and macro definitions
-to be shared between several project source files. You request the use of a
-header file in your project source file (C, C++, etc) located in `src` folder
-by including it, with the C preprocessing directive `#include'.
+FEATURES:
+It has shelves that can colored with the leds for many notifications
+and the biggest features is IT TELLS YOU THE TIME!
 
-```src/main.c
+OTA-Update (implemented but working not the way i want)
 
-#include "header.h"
+############################################
 
-int main (void)
-{
- ...
-}
-```
+List of items i used in this project:
 
-Including a header file produces the same results as copying the header file
-into each source file that needs it. Such copying would be time-consuming
-and error-prone. With a header file, the related declarations appear
-in only one place. If they need to be changed, they can be changed in one
-place, and programs that include the header file will automatically use the
-new version when next recompiled. The header file eliminates the labor of
-finding and changing all the copies as well as the risk that a failure to
-find one copy will result in inconsistencies within a program.
+- An Wemos D1 mini
 
-In C, the usual convention is to give header files names that end with `.h'.
-It is most portable to use only letters, digits, dashes, and underscores in
-header file names, and at most one dot.
+- A 5m roll of WS2812B LEDS with 60 LED’s a meter
 
-Read more about using header files in official GCC documentation:
+- A 5v power supply with screw terminals
 
-* Include Syntax
-* Include Operation
-* Once-Only Headers
-* Computed Includes
+- Many sorts of cable ;-)
 
-https://gcc.gnu.org/onlinedocs/cpp/Header-Files.html
+############################################
+The Wiring
+
+![Wiring](GiantLEDClock.jpg)
+
+############################################
+
+3D printed parts and wiring diagram can be downloaded from here: https://www.thingiverse.com/thing:4207524
+
+############################################
+
+Buy me a coffee to say thanks: https://ko-fi.com/etnie
+
+SUBSCRIBE: 
+- https://www.youtube.com/etnie383
+- https://www.thingiverse.com/etnie
+
+INSTAGRAM: https://www.instagram.com/andre_geig

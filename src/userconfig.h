@@ -21,8 +21,8 @@
 // -- Neopixel Definitions ------------------------
   #ifdef NEOPIXEL
     #include <Adafruit_NeoPixel.h>
-    #define PIN_SEGMENTS  15
-    #define LED_COUNT     279
+    #define PIN_SEGMENTS  14
+    #define LED_COUNT     347
   #endif
 // ------------------------------------------------
 
