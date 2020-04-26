@@ -1,4 +1,4 @@
 # GiantLEDClock
  Programm for GiantLEDClock
 
-![Wiring]GiantLEDClock.jpg
+![Wiring](GiantLEDClock.jpg)
