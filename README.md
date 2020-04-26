@@ -1,5 +1,5 @@
 ############################################
-Giant LED Clock with ESP (Arduino) 
+# Giant LED Clock with ESP (Arduino) 
 
 a 3d Printed Giant LED with an ESP (Arduino).
 
@@ -24,7 +24,7 @@ List of items i used in this project:
 - Many sorts of cable ;-)
 
 ############################################
-The Wiring
+# The Wiring
 
 ![Wiring](GiantLEDClock.jpg)
 
