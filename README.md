@@ -4,10 +4,12 @@ Giant LED Clock with ESP (Arduino)
 a 3d Printed Giant LED with an ESP (Arduino).
 
 FEATURES:
-It has shelves that can colored with the leds for many notifications
+It has shelves that can colored with leds
 and the biggest features is IT TELLS YOU THE TIME!
 
-OTA-Update (implemented but working not the way i want)
+PLANNED:
+OTA-Update
+MQTT for Notifications from the house automation
 
 ############################################
 

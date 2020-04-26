@@ -17,12 +17,4 @@ void wifiInit(void) {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 #endif
-  server.on("/", []() {
-    server.send(200, "text/plain", "Hi! I am ESP8266.");
-  });
-  ElegantOTA.begin(&server);    // Start ElegantOTA
-  server.begin();
-#if DEBUG
-  Serial.println("Server started");
-#endif
 }
