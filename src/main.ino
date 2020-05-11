@@ -29,6 +29,7 @@ int number7[] = {1,1,0,0,1,0,0};
 int number8[] = {1,1,1,1,1,1,1};
 int number9[] = {1,1,1,1,1,1,0};
 int SegmentOffset[] = {0,9,27,36,45,54,72};
+int SegmentOffsetLastSegment[] = {0,9,18,27,36,45,54};
 unsigned long timer1 = 0;
 unsigned long timer2 = 0;
 int hours;
@@ -103,10 +104,10 @@ while(millis() >= timer2 + 1000)
 
 // ===============================
 
-  setSegment(0, seconds2, 0, 0, 255);
-  setSegment(90,seconds1, 0, 0, 255);
-//  setSegment(180,minutes2, 0, 0, 255);
-//  setSegment(270,minutes1, 0, 0, 255);
+  setSegment(0, minutes2, 0, 0, 255);
+  setSegment(90,minutes1, 0, 0, 255);
+  setSegment(180,hour2, 0, 0, 255);
+  setSegment2(270,hour1, 0, 0, 255);
  
 }
 
@@ -297,3 +298,67 @@ void setSegment (int a, int number, int r, int g, int b)
       break;
   }
 }
+
+
+// ============================================================================================================================
+// ============================================================================================================================
+// Set Segments Last
+// ===============================
+void setSegment2 (int a, int number, int r, int g, int b)
+{
+   switch (number)
+  {
+    case 0:
+      for(int y = 0; y<7; y += 1) 
+      {
+        for(int x = 0; x<PpSeg; x += 1)
+        {
+          
+          if (number0[y] == 1)
+          {
+              led_segments.setPixelColor(SegmentOffsetLastSegment[y]+x+a, r, g, b);
+          }
+          if (number0[y] == 0)
+          {
+              led_segments.setPixelColor(SegmentOffsetLastSegment[y]+x+a, 0, 0, 0);
+          }
+        }
+      }
+      led_segments.show();
+      break;
+    case 1:
+      for(int y = 0; y<7; y += 1) 
+      {
+        for(int x = 0; x<PpSeg; x += 1) 
+        {
+          
+          if (number1[y] == 1)
+          {
+              led_segments.setPixelColor(SegmentOffsetLastSegment[y]+x+a, r, g, b);
+          }
+          if (number1[y] == 0)
+          {
+              led_segments.setPixelColor(SegmentOffsetLastSegment[y]+x+a, 0, 0, 0);
+          }
+        }
+      }
+      led_segments.show();
+      break;
+    case 2:
+      for(int y = 0; y<7; y += 1) 
+      {
+        for(int x = 0; x<PpSeg; x += 1) 
+        {
+      
+          if (number2[y] == 1)
+          {
+          led_segments.setPixelColor(SegmentOffsetLastSegment[y]+x+a, r, g, b);
+          }
+          if (number2[y] == 0)
+          {
+          led_segments.setPixelColor(SegmentOffsetLastSegment[y]+x+a, 0, 0, 0);
+          }
+        }
+      }
+      led_segments.show();
+      break;
