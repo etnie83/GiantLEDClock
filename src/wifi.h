@@ -4,11 +4,12 @@ void wifiInit(void) {
   Serial.println(F("Start Wifi"));
 #endif
  // Wait for connection
+ WiFi.begin(SSID, PASSWORD);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
-    WiFi.begin(SSID, PASSWORD);
+    //WiFi.begin(SSID, PASSWORD);  
     Serial.println("");
 #if DEBUG
   Serial.println("");
