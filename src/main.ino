@@ -42,8 +42,9 @@ int minutes2;
 int seconds;
 int seconds1;
 int seconds2;
+int offset = 3600;
 // ===============================
-NTPClient timeClient(ntpUDP, "europe.pool.ntp.org", 7200, 60000);
+NTPClient timeClient(ntpUDP, "europe.pool.ntp.org", offset, 60000);
 
 
 void setup(void) {
