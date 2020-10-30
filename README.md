@@ -4,12 +4,13 @@
 a 3d Printed Giant LED with an ESP (Arduino).
 
 FEATURES:
-It has shelves that can colored with leds
-and the biggest features is IT TELLS YOU THE TIME!
+- OTA-Update
+- It has shelves that can colored with leds
+- and the biggest features is IT SHOW YOU THE TIME!
 
 PLANNED:
-OTA-Update
-MQTT for Notifications from the house automation
+- MQTT for Notifications from the house automation
+- temperature-dependent color transmit over MQTT from the home automation
 
 ############################################
 
