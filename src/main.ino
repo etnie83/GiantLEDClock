@@ -12,6 +12,7 @@
 #include "wifi.h"
 #include <Adafruit_NeoPixel.h>
 #include <ArduinoOTA.h>
+#include <PubSubClient.h>
 
 // DEFINITIONS
 // ===============================
@@ -42,10 +43,68 @@ int minutes2;
 int seconds;
 int seconds1;
 int seconds2;
+int color1_r;
+int color1_g;
+int color1_b;
+int color2_r = 0;
+int color2_g = 0;
+int color2_b = 255;
 int offset = 3600;
+char msg[50];
 // ===============================
 NTPClient timeClient(ntpUDP, "europe.pool.ntp.org", offset, 60000);
 
+const char* mqtt_server = "192.168.0.55";
+
+void callback(char* topic, byte* payload, int length)
+ {
+  Serial.print("Message arrived [");
+  Serial.print(topic);
+  Serial.print("] ");
+  for (int i = 0; i < length; i++) {
+    Serial.print((char)payload[i]);
+    }
+  Serial.println();
+  if (strcmp(topic,"giantclock/color1/r")==0)
+    {
+    payload[length] = '\0'; // Make payload a string by NULL terminating it.
+    color1_r = atoi((char *)payload);
+    }
+  if (strcmp(topic,"giantclock/color1/g")==0)
+    {
+    payload[length] = '\0'; // Make payload a string by NULL terminating it.
+    color1_g = atoi((char *)payload);
+    }
+  if (strcmp(topic,"giantclock/color1/b")==0)
+    {
+    payload[length] = '\0'; // Make payload a string by NULL terminating it.
+    color1_b = atoi((char *)payload);
+    }
+}
+
+WiFiClient espClient;
+PubSubClient client(mqtt_server, 1883, callback, espClient);
+
+void reconnect() {
+  // Loop until we're reconnected
+  while (!client.connected()) {
+    Serial.print("Attempting MQTT connection...");
+    // Create a random client ID
+    String clientId = "ESP8266Client-";
+    clientId += String(random(0xffff), HEX);
+    // Attempt to connect
+  if (client.connect("giantclock", "openhab", "mqttbrokerpwdopenhab")) 
+    {
+    client.subscribe("giantclock/#");
+    } else {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
+      // Wait 5 seconds before retrying
+      delay(5000);
+    }
+  }
+}
 
 void setup(void) {
   Serial.begin(115200);
@@ -58,6 +117,11 @@ void setup(void) {
   led_segments.show();            // Turn OFF all pixels ASAP
   led_segments.setBrightness(50); // Set BRIGHTNESS to about 1/5 (max = 255)
 // ===============================
+
+  if (client.connect("giantclock", "openhab", "mqttbrokerpwdopenhab")) 
+    {
+    client.subscribe("giantclock/#");
+    }
 
   ArduinoOTA.setHostname("giantLED");
 
@@ -85,6 +149,11 @@ void setup(void) {
 
 void loop(void) {
 
+  if (!client.connected()) {
+    reconnect();
+  }
+    client.loop();
+
   ArduinoOTA.handle();
   
 // Refresh Time
@@ -109,7 +178,7 @@ void loop(void) {
 
 // ===============================
 // Seconds Blink
-while(millis() >= timer2 + 1000)
+/*while(millis() >= timer2 + 1000)
   { 
   if (secondblink == 0)  
   {
@@ -125,13 +194,13 @@ while(millis() >= timer2 + 1000)
   }
   timer2 = millis();
   }
-
+*/
 // ===============================
 
-  setSegment(0, minutes2, 0, 0, 255);
-  setSegment(90,minutes1, 0, 0, 255);
-  setSegment(180,hour2, 0, 0, 255);
-  setSegment2(270,hour1, 0, 0, 255);
+  setSegment(0, minutes2, color1_r, color1_g, color1_b);
+  setSegment(90,minutes1, color1_r, color1_g, color1_b);
+  setSegment(180,hour2, color1_r, color1_g, color1_b);
+  setSegment2(270,hour1, color1_r, color1_g, color1_b);
  
 }
 
