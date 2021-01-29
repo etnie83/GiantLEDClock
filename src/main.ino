@@ -54,7 +54,7 @@ char msg[50];
 // ===============================
 NTPClient timeClient(ntpUDP, "europe.pool.ntp.org", offset, 60000);
 
-const char* mqtt_server = "192.168.0.55";
+const char* mqtt_server = BROKERIP;
 
 void callback(char* topic, byte* payload, int length)
  {
@@ -93,7 +93,7 @@ void reconnect() {
     String clientId = "ESP8266Client-";
     clientId += String(random(0xffff), HEX);
     // Attempt to connect
-  if (client.connect("giantclock", "openhab", "mqttbrokerpwdopenhab")) 
+  if (client.connect("giantclock", "openhab", BROKERPASSWORD)) 
     {
     client.subscribe("giantclock/#");
     } else {
@@ -118,7 +118,7 @@ void setup(void) {
   led_segments.setBrightness(50); // Set BRIGHTNESS to about 1/5 (max = 255)
 // ===============================
 
-  if (client.connect("giantclock", "openhab", "mqttbrokerpwdopenhab")) 
+  if (client.connect("giantclock", "openhab", BROKERPASSWORD)) 
     {
     client.subscribe("giantclock/#");
     }

@@ -26,4 +26,7 @@
   #endif
 // ------------------------------------------------
 
+#define BROKERIP              "YOUR_IP_BROKER"
+#define BROKERPASSWORD        "YOUR_BROKER_PASSWORD"
+
 #endif // _USER_CONFIG_H_
