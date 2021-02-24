@@ -12,6 +12,11 @@ PLANNED:
 - MQTT for Notifications from the house automation
 - temperature-dependent color transmit over MQTT from the home automation
 
+![First Test](Prebuild.jpg)
+
+![On the Wall](onthewall.jpg)
+
+![In the Darkness](darkness.jpg)
 ############################################
 
 List of items i used in this project:
