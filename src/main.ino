@@ -13,6 +13,7 @@
 #include <Adafruit_NeoPixel.h>
 #include <ArduinoOTA.h>
 #include <PubSubClient.h>
+#include <ArduinoJson.h>
 
 // DEFINITIONS
 // ===============================
@@ -51,6 +52,11 @@ int color2_g = 0;
 int color2_b = 255;
 int offset = 3600;
 char msg[50];
+int alarm_set;
+int previous_alarm_set = 0;
+int alarm_time = 0;
+long now;
+
 // ===============================
 NTPClient timeClient(ntpUDP, "europe.pool.ntp.org", offset, 60000);
 
@@ -80,7 +86,17 @@ void callback(char* topic, byte* payload, int length)
     payload[length] = '\0'; // Make payload a string by NULL terminating it.
     color1_b = atoi((char *)payload);
     }
-}
+  if (strcmp(topic,"giantclock/alarm/set")==0)
+    {
+    payload[length] = '\0'; // Make payload a string by NULL terminating it.
+    alarm_set = atoi((char *)payload);
+    }
+  if (strcmp(topic,"giantclock/alarm/time")==0)
+    {
+    payload[length] = '\0'; // Make payload a string by NULL terminating it.
+    alarm_time = atoi((char *)payload);
+    }
+  }
 
 WiFiClient espClient;
 PubSubClient client(mqtt_server, 1883, callback, espClient);
@@ -110,7 +126,7 @@ void setup(void) {
   Serial.begin(115200);
     // Wifi initialize
   wifiInit();
-
+  
 // START LED
 // ===============================
   led_segments.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
@@ -148,7 +164,7 @@ void setup(void) {
 }
 
 void loop(void) {
-
+  now = millis();
   if (!client.connected()) {
     reconnect();
   }
@@ -202,6 +218,11 @@ void loop(void) {
   setSegment(180,hour2, color1_r, color1_g, color1_b);
   setSegment2(270,hour1, color1_r, color1_g, color1_b);
  
+if (alarm_set == 1 && (previous_alarm_set != alarm_set)) 
+  {
+    alarm(alarm_time);
+  }
+previous_alarm_set = alarm_set;
 }
 
 // ============================================================================================================================
@@ -461,32 +482,39 @@ void setSegment2 (int a, int number, int r, int g, int b)
   }
 }
 
-void alarm(){
+void alarm(int time)
+{
+  Serial.println("Alarmmodus");
+
+  long previousMillis;
+  previousMillis = now;
+  if (time == 0 || time > 60) { time = 5; }
+  
+  while(now <= previousMillis + (time * 1000))
+  {
+    now = millis();
     for(int i=0;i<14;i++){
     // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
     led_segments.setPixelColor(i+333, led_segments.Color(255,0,0)); // Moderately bright green color.
+    } 
     led_segments.show(); // This sends the updated pixel color to the hardware.
-  } 
-  
-  delay(50); // Delay for a period of time (in milliseconds). 
-  
-  for(int i=0;i<14;i++){
+    delay(50); // Delay for a period of time (in milliseconds). 
+    for(int i=0;i<14;i++){
     led_segments.setPixelColor(i+333, led_segments.Color(0,0,0)); // Moderately bright green color.
+    } 
     led_segments.show(); // This sends the updated pixel color to the hardware.
-  } 
-  delay(30); // Delay for a period of time (in milliseconds).   
-  
+    delay(30); // Delay for a period of time (in milliseconds).     
     for(int i=0;i<14;i++){
     // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
     led_segments.setPixelColor(i+333, led_segments.Color(255,0,0)); // Moderately bright green color.
+    } 
     led_segments.show(); // This sends the updated pixel color to the hardware.
-  } 
-  
-  delay(50); // Delay for a period of time (in milliseconds). 
-  
-  for(int i=0;i<14;i++){
+    delay(50); // Delay for a period of time (in milliseconds). 
+    for(int i=0;i<14;i++){
     led_segments.setPixelColor(i+333, led_segments.Color(0,0,0)); // Moderately bright green color.
+    }
     led_segments.show(); // This sends the updated pixel color to the hardware.
-  } 
-  delay(250); // Delay for a period of time (in milliseconds).   
+    delay(250); // Delay for a period of time (in milliseconds).   
+  }
+alarm_set = 0;
 }
