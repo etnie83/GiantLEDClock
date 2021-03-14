@@ -12,15 +12,22 @@ PLANNED:
 - MQTT for Notifications from the house automation
 - temperature-dependent color transmit over MQTT from the home automation
 
+![First Test](prebuild.jpg)
+
+![On the Wall](onthewall.jpg)
+
+![In the Darkness](darkness.jpg)
 ############################################
 
 List of items i used in this project:
 
-- An Wemos D1 mini
+- Wemos D1 mini
 
-- A 5m roll of WS2812B LEDS with 60 LED’s a meter
+- 5m roll of WS2812B LEDS with 60 LED’s a meter
 
-- A 5v power supply with screw terminals
+- 5v power supply with screw terminals
+
+- 3,5 kg Filament for the prints
 
 - Many sorts of cable ;-)
 
@@ -38,6 +45,7 @@ List of items i used in this project:
 Buy me a coffee to say thanks: https://ko-fi.com/etnie
 
 SUBSCRIBE: 
+- http://keinkakao.de
 - https://www.youtube.com/etnie383
 - https://www.thingiverse.com/etnie
 
