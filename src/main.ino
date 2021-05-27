@@ -35,6 +35,7 @@ int SegmentOffset[] = {0,9,27,36,45,54,72};
 int SegmentOffsetLastSegment[] = {0,9,18,27,36,45,54};
 unsigned long timer1 = 0;
 unsigned long timer2 = 0;
+unsigned long timer3 = 0;
 int hours;
 int hour1;
 int hour2;
@@ -56,6 +57,8 @@ int alarm_set;
 int previous_alarm_set = 0;
 int alarm_time = 0;
 long now;
+int soc = 0;
+int percent = 0;
 
 // ===============================
 NTPClient timeClient(ntpUDP, "europe.pool.ntp.org", offset, 60000);
@@ -96,6 +99,16 @@ void callback(char* topic, byte* payload, int length)
     payload[length] = '\0'; // Make payload a string by NULL terminating it.
     alarm_time = atoi((char *)payload);
     }
+  if (strcmp(topic,"solar/accu/soc")==0)
+    {
+    payload[length] = '\0'; // Make payload a string by NULL terminating it.
+    soc = atoi((char *)payload);
+    }
+  if (strcmp(topic,"solar/accu/percent")==0)
+    {
+    payload[length] = '\0'; // Make payload a string by NULL terminating it.
+    percent = atoi((char *)payload);
+    }
   }
 
 WiFiClient espClient;
@@ -112,6 +125,7 @@ void reconnect() {
   if (client.connect("giantclock", "openhab", BROKERPASSWORD)) 
     {
     client.subscribe("giantclock/#");
+    client.subscribe("solar/accu/#");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -137,6 +151,7 @@ void setup(void) {
   if (client.connect("giantclock", "openhab", BROKERPASSWORD)) 
     {
     client.subscribe("giantclock/#");
+    client.subscribe("solar/accu/#");
     }
 
   ArduinoOTA.setHostname("giantLED");
@@ -218,6 +233,8 @@ while(millis() >= timer2 + 1000)
   setSegment(180,hour2, color1_r, color1_g, color1_b);
   setSegment2(270,hour1, color1_r, color1_g, color1_b);
  
+soc_led(soc, percent);
+
 if (alarm_set == 1 && (previous_alarm_set != alarm_set)) 
   {
     alarm(alarm_time);
@@ -517,4 +534,107 @@ void alarm(int time)
     delay(250); // Delay for a period of time (in milliseconds).   
   }
 alarm_set = 0;
+}
+
+void soc_led(int state, int state_percent)
+{  
+  while(millis() >= timer3 + 1000)
+  {
+    if (state_percent >= 100 && state == 4)
+      {
+        for(int i=0;i<2;i++){
+        // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+        led_segments.setPixelColor(i+108, led_segments.Color(0,255,0));
+        } 
+        led_segments.show(); // This sends the updated pixel color to the hardware.
+        for(int i=0;i<2;i++){
+        led_segments.setPixelColor(i+171, led_segments.Color(0,255,0));
+        } 
+        led_segments.show(); // This sends the updated pixel color to the hardware.
+        for(int i=0;i<2;i++){
+        led_segments.setPixelColor(i+153, led_segments.Color(0,255,0));
+        } 
+        led_segments.show(); // This sends the updated pixel color to the hardware.
+        delay(800);
+        for(int i=0;i<2;i++){
+        led_segments.setPixelColor(i+108, led_segments.Color(0,0,0));
+        } 
+        led_segments.show(); // This sends the updated pixel color to the hardware.
+      }
+    else if (state == 3)
+      {
+        for(int i=0;i<2;i++){
+        // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+        led_segments.setPixelColor(i+108, led_segments.Color(255,0,0));
+        } 
+        led_segments.show(); // This sends the updated pixel color to the hardware.
+        delay(300);
+        for(int i=0;i<2;i++){
+        led_segments.setPixelColor(i+171, led_segments.Color(255,0,0));
+        } 
+        led_segments.show(); // This sends the updated pixel color to the hardware.
+        delay(300);
+        for(int i=0;i<2;i++){
+        // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+        led_segments.setPixelColor(i+153, led_segments.Color(255,0,0));
+        } 
+        led_segments.show(); // This sends the updated pixel color to the hardware.
+        delay(300);
+            for(int i=0;i<2;i++){
+        // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+        led_segments.setPixelColor(i+108, led_segments.Color(0,0,0));
+        } 
+        led_segments.show(); // This sends the updated pixel color to the hardware.
+        delay(300);
+        for(int i=0;i<2;i++){
+        led_segments.setPixelColor(i+171, led_segments.Color(0,0,0));
+        } 
+        led_segments.show(); // This sends the updated pixel color to the hardware.
+        delay(300);
+        for(int i=0;i<2;i++){
+        // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+        led_segments.setPixelColor(i+153, led_segments.Color(0,0,0));
+        } 
+        led_segments.show(); // This sends the updated pixel color to the hardware.
+        delay(300);
+      }
+    else if (state == 4)
+      {
+        for(int i=0;i<2;i++){
+        // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+        led_segments.setPixelColor(i+153, led_segments.Color(0,255,0));
+        } 
+        led_segments.show(); // This sends the updated pixel color to the hardware.
+        delay(300);
+        for(int i=0;i<2;i++){
+        led_segments.setPixelColor(i+171, led_segments.Color(0,255,0));
+        } 
+        led_segments.show(); // This sends the updated pixel color to the hardware.
+        delay(300);
+        for(int i=0;i<2;i++){
+        // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+        led_segments.setPixelColor(i+108, led_segments.Color(0,255,0));
+        } 
+        led_segments.show(); // This sends the updated pixel color to the hardware.
+        delay(300);
+            for(int i=0;i<2;i++){
+        // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+        led_segments.setPixelColor(i+153, led_segments.Color(0,0,0));
+        } 
+        led_segments.show(); // This sends the updated pixel color to the hardware.
+        delay(300);
+        for(int i=0;i<2;i++){
+        led_segments.setPixelColor(i+171, led_segments.Color(0,0,0));
+        } 
+        led_segments.show(); // This sends the updated pixel color to the hardware.
+        delay(300);
+        for(int i=0;i<2;i++){
+        // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+        led_segments.setPixelColor(i+108, led_segments.Color(0,0,0));
+        } 
+        led_segments.show(); // This sends the updated pixel color to the hardware.
+        delay(300);
+      }
+  timer3 = millis();
+  }
 }
