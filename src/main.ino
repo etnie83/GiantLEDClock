@@ -50,7 +50,7 @@ int color1_b;
 int color2_r = 0;
 int color2_g = 0;
 int color2_b = 255;
-int offset = 3600;
+int offset = 7200;
 char msg[50];
 int alarm_set;
 int previous_alarm_set = 0;
@@ -194,11 +194,11 @@ void loop(void) {
 
 // ===============================
 // Seconds Blink
-/*while(millis() >= timer2 + 1000)
+while(millis() >= timer2 + 1000)
   { 
   if (secondblink == 0)  
   {
-  led_segments.setPixelColor(175, 255, 0, 0);
+  led_segments.setPixelColor(175, 50, 0, 0);
   led_segments.show();
   secondblink = 1;
   }
@@ -210,7 +210,7 @@ void loop(void) {
   }
   timer2 = millis();
   }
-*/
+
 // ===============================
 
   setSegment(0, minutes2, color1_r, color1_g, color1_b);
