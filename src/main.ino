@@ -213,13 +213,13 @@ while(millis() >= timer2 + 1000)
   { 
   if (secondblink == 0)  
   {
-  led_segments.setPixelColor(175, 50, 0, 0);
+  led_segments.setPixelColor(85, 50, 0, 0);
   led_segments.show();
   secondblink = 1;
   }
   else
   {
-  led_segments.setPixelColor(175, 0, 0, 0);
+  led_segments.setPixelColor(85, 0, 0, 0);
   led_segments.show();
   secondblink = 0;
   }
@@ -540,97 +540,118 @@ void soc_led(int state, int state_percent)
 {  
   while(millis() >= timer3 + 1000)
   {
-    if (state_percent >= 100 && state == 4)
+    if (state_percent >= 100 && state == 3) // Akku ist voll
       {
         for(int i=0;i<2;i++){
         // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-        led_segments.setPixelColor(i+108, led_segments.Color(0,255,0));
+        led_segments.setPixelColor(i+111, led_segments.Color(0,255,0));
         } 
         led_segments.show(); // This sends the updated pixel color to the hardware.
         for(int i=0;i<2;i++){
-        led_segments.setPixelColor(i+171, led_segments.Color(0,255,0));
+        led_segments.setPixelColor(i+174, led_segments.Color(0,255,0));
         } 
         led_segments.show(); // This sends the updated pixel color to the hardware.
         for(int i=0;i<2;i++){
-        led_segments.setPixelColor(i+153, led_segments.Color(0,255,0));
+        led_segments.setPixelColor(i+156, led_segments.Color(0,255,0));
         } 
         led_segments.show(); // This sends the updated pixel color to the hardware.
         delay(800);
         for(int i=0;i<2;i++){
-        led_segments.setPixelColor(i+108, led_segments.Color(0,0,0));
+        led_segments.setPixelColor(i+111, led_segments.Color(0,0,0));
         } 
         led_segments.show(); // This sends the updated pixel color to the hardware.
       }
-    else if (state == 3)
+    else if (state_percent <= 0 && state == 6)  // Akku ist leer
       {
         for(int i=0;i<2;i++){
         // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-        led_segments.setPixelColor(i+108, led_segments.Color(255,0,0));
+        led_segments.setPixelColor(i+111, led_segments.Color(0,0,0));
+        } 
+        led_segments.show(); // This sends the updated pixel color to the hardware.
+        for(int i=0;i<2;i++){
+        led_segments.setPixelColor(i+174, led_segments.Color(0,0,0));
+        } 
+        led_segments.show(); // This sends the updated pixel color to the hardware.
+        for(int i=0;i<2;i++){
+        led_segments.setPixelColor(i+156, led_segments.Color(255,0,0));
+        } 
+        led_segments.show(); // This sends the updated pixel color to the hardware.
+        delay(800);
+        for(int i=0;i<2;i++){
+        led_segments.setPixelColor(i+156, led_segments.Color(0,0,0));
+        } 
+        led_segments.show(); // This sends the updated pixel color to the hardware.
+      }
+    else if (state == 3)  // Akku entlädt
+      {
+        for(int i=0;i<2;i++){
+        // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+        led_segments.setPixelColor(i+111, led_segments.Color(255,0,0));
         } 
         led_segments.show(); // This sends the updated pixel color to the hardware.
         delay(300);
         for(int i=0;i<2;i++){
-        led_segments.setPixelColor(i+171, led_segments.Color(255,0,0));
+        led_segments.setPixelColor(i+174, led_segments.Color(255,0,0));
         } 
         led_segments.show(); // This sends the updated pixel color to the hardware.
         delay(300);
         for(int i=0;i<2;i++){
         // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-        led_segments.setPixelColor(i+153, led_segments.Color(255,0,0));
+        led_segments.setPixelColor(i+156, led_segments.Color(255,0,0));
         } 
         led_segments.show(); // This sends the updated pixel color to the hardware.
         delay(300);
             for(int i=0;i<2;i++){
         // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-        led_segments.setPixelColor(i+108, led_segments.Color(0,0,0));
+        led_segments.setPixelColor(i+111, led_segments.Color(0,0,0));
         } 
         led_segments.show(); // This sends the updated pixel color to the hardware.
         delay(300);
         for(int i=0;i<2;i++){
-        led_segments.setPixelColor(i+171, led_segments.Color(0,0,0));
+        led_segments.setPixelColor(i+174, led_segments.Color(0,0,0));
         } 
         led_segments.show(); // This sends the updated pixel color to the hardware.
         delay(300);
         for(int i=0;i<2;i++){
         // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-        led_segments.setPixelColor(i+153, led_segments.Color(0,0,0));
+        led_segments.setPixelColor(i+156, led_segments.Color(0,0,0));
         } 
         led_segments.show(); // This sends the updated pixel color to the hardware.
         delay(300);
       }
-    else if (state == 4)
+    else if (state == 4)  // Akku lädt
       {
         for(int i=0;i<2;i++){
         // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-        led_segments.setPixelColor(i+153, led_segments.Color(0,255,0));
+        led_segments.setPixelColor(i+156, led_segments.Color(0,255,0));
         } 
         led_segments.show(); // This sends the updated pixel color to the hardware.
         delay(300);
         for(int i=0;i<2;i++){
-        led_segments.setPixelColor(i+171, led_segments.Color(0,255,0));
+        led_segments.setPixelColor(i+174, led_segments.Color(0,255,0));
         } 
         led_segments.show(); // This sends the updated pixel color to the hardware.
         delay(300);
         for(int i=0;i<2;i++){
         // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-        led_segments.setPixelColor(i+108, led_segments.Color(0,255,0));
+        led_segments.setPixelColor(i+111, led_segments.Color(0,255,0));
         } 
         led_segments.show(); // This sends the updated pixel color to the hardware.
         delay(300);
             for(int i=0;i<2;i++){
         // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-        led_segments.setPixelColor(i+153, led_segments.Color(0,0,0));
+        led_segments.setPixelColor(i+156, led_segments.Color(0,0,0));
         } 
         led_segments.show(); // This sends the updated pixel color to the hardware.
         delay(300);
         for(int i=0;i<2;i++){
-        led_segments.setPixelColor(i+171, led_segments.Color(0,0,0));
+        led_segments.setPixelColor(i+174, led_segments.Color(0,0,0));
         } 
         led_segments.show(); // This sends the updated pixel color to the hardware.
         delay(300);
         for(int i=0;i<2;i++){
         // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-        led_segments.setPixelColor(i+108, led_segments.Color(0,0,0));
+        led_segments.setPixelColor(i+111, led_segments.Color(0,0,0));
         } 
         led_segments.show(); // This sends the updated pixel color to the hardware.
         delay(300);
